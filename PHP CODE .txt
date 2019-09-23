@@ -1,0 +1,189 @@
+Create database books;
+create user 'user3'@'localhost' identified by 'Password01';
+use books;
+grant SELECT, INSERT, UPDATE, DELETE on books.* TO 'user2'@'localhost' identified by 'Password01';
+
+CREATE TABLE Book(
+bookid VARCHAR(10) PRIMARY KEY,
+Bookname VARCHAR(30),
+Authorid VARCHAR(10));
+
+CREATE TABLE Author(
+Author_id VARCHAR(10) PRIMARY KEY,
+FirstName VARCHAR(30),
+LastName VARCHAR(30),
+email VARCHAR(30));
+
+ALTER TABLE book ADD FOREIGN KEY (Authorid) REFERENCES Author(Author_id);
+
+
+INSERT INTO Author VALUES('A001','James','Miller','JamesLMiller@armyspy.com');
+INSERT INTO Author VALUES('A002','Patricia','Anderson','PatriciaSAnderson@dayrep.com');
+INSERT INTO Author VALUES('A003','Christopher','Akbar','ChristopherMAkbar@rhyta.com');
+INSERT INTO Author VALUES('A004','William','Burden','WilliamCBurden@armyspy.com');
+
+
+INSERT INTO Book VALUES('B001','SQL Programming ','A001');
+INSERT INTO Book VALUES('B002','C Programming','A004');
+INSERT INTO Book VALUES('B003','C# Programming','A002');
+INSERT INTO Book VALUES('B004','Java Programming','A003');
+
+
+
+
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.Statement;
+
+public class Task2 {
+    
+    public static void main(String[] args) {
+        Connection connection = null;
+        
+        try {
+            connection = DriverManager.getConnection("jdbc:mysql://localhost/books", "root", "root");
+            
+            System.out.println("List of books");
+            
+            String query= "SELECT * FROM book order by bookid";            
+            Statement statement = connection.createStatement();
+            ResultSet resultSet = statement.executeQuery(query);
+            
+            System.out.println(String.format("%-10s %s", "BookID","BookName")); 
+            while (resultSet.next()){
+                System.out.println(String.format("%-10s %s", resultSet.getString("bookid"),resultSet.getString("Bookname")));                
+            }
+	} 
+        catch (Exception e) {
+            System.err.println(e);
+        }
+  }
+}
+
+
+
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.Statement;
+
+public class Task3 {
+    
+    public static void main(String[] args) {
+        Connection connection = null;
+        
+        try {
+            connection = DriverManager.getConnection("jdbc:mysql://localhost/books", "root", "root");
+            
+            System.out.println("List of books and their authors");
+            
+            String query= "SELECT * FROM book inner join author on author.Author_id=Book.Authorid order by bookid";            
+            Statement statement = connection.createStatement();
+            ResultSet resultSet = statement.executeQuery(query);
+            
+            System.out.println(String.format("%-10s %-30s %-20s %-20s %s", "BookID","BookName","FirstName", "LastName", "Email")); 
+            while (resultSet.next()){
+                System.out.println(String.format("%-10s %-30s %-20s %-20s %s", 
+                        resultSet.getString("bookid"),resultSet.getString("Bookname"),
+                        resultSet.getString("FirstName"),resultSet.getString("LastName"),
+                        resultSet.getString("email")));                
+            }
+	} 
+        catch (Exception e) {
+            System.err.println(e);
+        }
+  }
+}
+
+
+
+
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
+import java.util.Scanner;
+
+public class Task5 {
+    public static void main(String args[]){
+        try{
+            Scanner inFile=new Scanner(new FileReader(new File("Data_R_01.txt")));
+            while(inFile.hasNextLine()){
+                String line=inFile.nextLine();                
+                String[] data=line.split("\t");
+                for(int i=0;i<data.length;i++){
+                    System.out.print(String.format("%-20s",data[i]));
+                }
+                System.out.println();
+            }
+        }
+        catch(IOException ex){
+            System.out.println("Error in reading data from file");
+        }
+    }
+}
+
+
+
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.util.Scanner;
+
+public class Task6 {
+    public static void main(String args[]){
+        try{
+            Scanner sc=new Scanner(System.in);
+            
+            PrintWriter writer=new PrintWriter(new FileWriter("Data_W_01.txt"));
+            
+            writer.println("Student Id,First Name, Last name, Postcode, Mobile Number");
+            writer.flush();
+            
+            boolean loop=true;
+            while(loop){
+                System.out.print("Enter the Student ID: ");
+                String studentID=sc.nextLine();
+                
+                System.out.print("Enter the Student First Name: ");
+                String firstName=sc.nextLine();
+                
+                System.out.print("Enter the Student Last Name: ");
+                String lastName=sc.nextLine();
+                
+                System.out.print("Enter the Student Postcode: ");
+                String postcode=sc.nextLine();
+                
+                System.out.print("Enter the Student Mobile Number: ");
+                String mobileNumber=sc.nextLine();
+                
+                writer.println(studentID+","+firstName+","+ lastName+","+postcode+","+mobileNumber);
+                writer.flush();
+            
+                System.out.print("Do you want to enter another customer details (y/n)? ");
+                String option=sc.nextLine().toLowerCase();
+                if(option.equals("n")){
+                    loop=false;
+                }
+                System.out.println();
+            }            
+        }
+        catch(IOException ex){
+            System.out.println("Error in writing data to file");
+        }
+    }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
